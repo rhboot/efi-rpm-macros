@@ -15,3 +15,4 @@ The following rpm macros are set:
 %efi_esp_boot	the full path to \EFI\BOOT on the EFI System Partition
 %efi_esp_dir	the full path to your vendor directory on the EFI System Partition
 %efi_arch	the EFI architecture name, e.g. x64
+%efi_arch_upper	the EFI architecture name in upper case, e.g. X64
