@@ -1,0 +1,44 @@
+Summary: Common RPM Macros for building EFI-related packages
+Name: efi-rpm-macros
+Version: 1
+Release: 1%{?dist}
+Group: Development/System
+License: GPLv3
+URL: http://github.com/rhinstaller/%{name}/
+ExclusiveArch: @@EFI_ARCHES@@
+
+Source0: https://github.com/rhinstaller/%{name}/releases/download/%{name}-%{version}/%{name}-%{version}.tar.bz2
+
+%define debug_package %{nil}
+%global _efi_vendor_ %(eval sed -n -e 's/rhel/redhat/' -e 's/^ID=//p' /etc/os-release)
+
+%description
+%{name} provides a set of RPM macros for use in EFI-related packages.
+
+%prep
+%setup -q
+git init
+git config user.email "example@example.com"
+git config user.name "RPM Ninjas"
+git add .
+git commit -a -q -m "%{version} baseline."
+git am %{patches} </dev/null
+git config --unset user.email
+git config --unset user.name
+
+%build
+make %{?_smp_mflags} EFI_VENDOR=%{_efi_vendor_} clean all
+
+%install
+rm -rf %{buildroot}
+%make_install EFI_VENDOR=%{_efi_vendor_}
+
+%files
+%defattr(-,root,root,-)
+%{!?_licensedir:%global license %%doc}
+%license LICENSE
+%{_rpmmacrodir}/*
+
+%changelog
+* Mon Apr 30 2018 Peter Jones <pjones@redhat.com> - 1-1
+- First shot at building it.

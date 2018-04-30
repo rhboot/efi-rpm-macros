@@ -1,0 +1,6 @@
+*~
+.*.sw?
+macros.efi
+efi-rpm-macros.spec
+*.tar.*
+usr/

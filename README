@@ -1,0 +1,7 @@
+efi-rpm-macros provides a set of RPM macros for use in EFI-related packages.
+
+The following variables are meaningful on the make command line:
+
+EFI_ESP_ROOT	the directory where the EFI System Partition is mounted.
+EFI_ARCHES	the rpm arches %efi will match on
+EFI_VENDOR	the vendor name for your EFI System Partition directory

@@ -1,0 +1,25 @@
+#
+# EFI specific macro definitions
+#
+
+%efi @@EFI_ARCHES@@
+
+%efi_vendor @@EFI_VENDOR@@
+
+%efi_esp_root @@EFI_ESP_ROOT@@
+%efi_esp_efi %{efi_esp_root}/EFI
+%efi_esp_boot %{efi_esp_efi}/BOOT
+%efi_esp_dir %{efi_esp_efi}/%{efi_vendor}
+
+%ifarch aarch64
+%global efi_arch aa64
+%endif
+%ifarch %{arm}
+%global efi_arch arm
+%endif
+%ifarch %{ix86}
+%global efi_arch ia32
+%endif
+%ifarch x86_64
+%global efi_arch x64
+%endif
