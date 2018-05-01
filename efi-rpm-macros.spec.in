@@ -6,8 +6,7 @@ Group: Development/System
 License: GPLv3+
 URL: https://github.com/rhboot/%{name}/
 ExclusiveArch: @@EFI_ARCHES@@
-#BuildRequires: git
-BuildRequires: sed
+BuildRequires: git sed
 Requires: rpm
 BuildArch: noarch
 
@@ -20,15 +19,7 @@ Source0: https://github.com/rhboot/%{name}/releases/download/%{version}/%{name}-
 %{name} provides a set of RPM macros for use in EFI-related packages.
 
 %prep
-%setup -q
-#git init
-#git config user.email "example@example.com"
-#git config user.name "RPM Ninjas"
-#git add .
-#git commit -a -q -m "%%{version} baseline."
-#git am %%{patches} </dev/null
-#git config --unset user.email
-#git config --unset user.name
+%autosetup -S git
 
 %build
 %make_build EFI_VENDOR=%{_efi_vendor_} clean all
