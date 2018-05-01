@@ -36,29 +36,31 @@ install : $(TARGETS)
 	install -d -m 0755 $(DESTDIR)/$(MACRODIR)
 	install -m 0644 macros.efi $(DESTDIR)/$(MACRODIR)/
 
+$(TARGETS) :
 % : %.in
 	@echo creating $@
 	@sed	\
 		-e 's,@@EFI_ESP_ROOT@@,$(EFI_ESP_ROOT),g' \
 		-e 's,@@EFI_ARCHES@@,$(EFI_ARCHES),g' \
 		-e 's,@@EFI_VENDOR@@,$(EFI_VENDOR),g' \
+		-e 's,@@EFI_RPM_MACROS_VERSION@@,$(VERSION),g' \
 		<$^ >$@
 
-GITTAG = $(shell bash -c "echo $$(($(VERSION) + 1))")
+GITTAG ?= $(shell bash -c "echo $$(($(VERSION) + 1))")
 
 test-archive: efi-rpm-macros.spec
-	@rm -rf /tmp/efi-rpm-macros-$(GITTAG) /tmp/efi-rpm-macros-$(GITTAG)-tmp
-	@mkdir -p /tmp/efi-rpm-macros-$(GITTAG)-tmp
-	@git archive --format=tar $(shell git branch | awk '/^*/ { print $$2 }') | ( cd /tmp/efi-rpm-macros-$(GITTAG)-tmp/ ; tar x )
-	@git diff | ( cd /tmp/efi-rpm-macros-$(GITTAG)-tmp/ ; patch -s -p1 -b -z .gitdiff )
-	@mv /tmp/efi-rpm-macros-$(GITTAG)-tmp/ /tmp/efi-rpm-macros-$(GITTAG)/
-	@cp efi-rpm-macros.spec /tmp/efi-rpm-macros-$(GITTAG)/
-	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efi-rpm-macros-$(GITTAG).tar.bz2 efi-rpm-macros-$(GITTAG)
-	@rm -rf /tmp/efi-rpm-macros-$(GITTAG)
-	@echo "The archive is in efi-rpm-macros-$(GITTAG).tar.bz2"
+	@rm -rf /tmp/efi-rpm-macros-$(VERSION) /tmp/efi-rpm-macros-$(VERSION)-tmp
+	@mkdir -p /tmp/efi-rpm-macros-$(VERSION)-tmp
+	@git archive --format=tar $(shell git branch | awk '/^*/ { print $$2 }') | ( cd /tmp/efi-rpm-macros-$(VERSION)-tmp/ ; tar x )
+	@git diff | ( cd /tmp/efi-rpm-macros-$(VERSION)-tmp/ ; patch -s -p1 -b -z .gitdiff )
+	@mv /tmp/efi-rpm-macros-$(VERSION)-tmp/ /tmp/efi-rpm-macros-$(VERSION)/
+	@cp efi-rpm-macros.spec /tmp/efi-rpm-macros-$(VERSION)/
+	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efi-rpm-macros-$(VERSION).tar.bz2 efi-rpm-macros-$(VERSION)
+	@rm -rf /tmp/efi-rpm-macros-$(VERSION)
+	@echo "The archive is in efi-rpm-macros-$(VERSION).tar.bz2"
 
 bumpver :
-	@echo VERSION=$(GITTAG) > Makefile.version
+	@echo VERSION ?= $(GITTAG) > Makefile.version
 	@git add Makefile.version
 	git commit -m "Bump version to $(GITTAG)" -s
 

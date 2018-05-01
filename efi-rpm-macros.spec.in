@@ -1,15 +1,19 @@
 Summary: Common RPM Macros for building EFI-related packages
 Name: efi-rpm-macros
-Version: 1
+Version: @@EFI_RPM_MACROS_VERSION@@
 Release: 1%{?dist}
 Group: Development/System
-License: GPLv3
-URL: http://github.com/rhinstaller/%{name}/
+License: GPLv3+
+URL: https://github.com/rhboot/%{name}/
 ExclusiveArch: @@EFI_ARCHES@@
+#BuildRequires: git
+BuildRequires: sed
+Requires: rpm
+BuildArch: noarch
 
-Source0: https://github.com/rhinstaller/%{name}/releases/download/%{name}-%{version}/%{name}-%{version}.tar.bz2
+Source0: https://github.com/rhboot/%{name}/releases/download/%{version}/%{name}-%{version}.tar.bz2
 
-%define debug_package %{nil}
+%global debug_package %{nil}
 %global _efi_vendor_ %(eval sed -n -e 's/rhel/redhat/' -e 's/^ID=//p' /etc/os-release)
 
 %description
@@ -17,26 +21,25 @@ Source0: https://github.com/rhinstaller/%{name}/releases/download/%{name}-%{vers
 
 %prep
 %setup -q
-git init
-git config user.email "example@example.com"
-git config user.name "RPM Ninjas"
-git add .
-git commit -a -q -m "%{version} baseline."
-git am %{patches} </dev/null
-git config --unset user.email
-git config --unset user.name
+#git init
+#git config user.email "example@example.com"
+#git config user.name "RPM Ninjas"
+#git add .
+#git commit -a -q -m "%%{version} baseline."
+#git am %%{patches} </dev/null
+#git config --unset user.email
+#git config --unset user.name
 
 %build
-make %{?_smp_mflags} EFI_VENDOR=%{_efi_vendor_} clean all
+%make_build EFI_VENDOR=%{_efi_vendor_} clean all
 
 %install
-rm -rf %{buildroot}
 %make_install EFI_VENDOR=%{_efi_vendor_}
 
 %files
-%defattr(-,root,root,-)
 %{!?_licensedir:%global license %%doc}
 %license LICENSE
+%doc README
 %{_rpmmacrodir}/*
 
 %changelog
