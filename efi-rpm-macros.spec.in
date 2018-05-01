@@ -43,5 +43,8 @@ Source0: https://github.com/rhboot/%{name}/releases/download/%{version}/%{name}-
 %{_rpmmacrodir}/*
 
 %changelog
+* Tue May 01 2018 Peter Jones <pjones@redhat.com> - 2-1
+- Lots of rpmlint fixups and the like.
+
 * Mon Apr 30 2018 Peter Jones <pjones@redhat.com> - 1-1
 - First shot at building it.
