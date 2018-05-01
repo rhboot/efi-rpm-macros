@@ -18,6 +18,15 @@ Source0: https://github.com/rhboot/%{name}/releases/download/%{version}/%{name}-
 %description
 %{name} provides a set of RPM macros for use in EFI-related packages.
 
+%package -n efi-srpm-macros
+Summary: Common SRPM Macros for building EFI-related packages
+Group: Development/System
+BuildArch: noarch
+Requires: rpm
+
+%description -n efi-srpm-macros
+efi-srpm-macros provides a set of SRPM macros for use in EFI-related packages.
+
 %prep
 %autosetup -S git
 
@@ -31,7 +40,13 @@ Source0: https://github.com/rhboot/%{name}/releases/download/%{version}/%{name}-
 %{!?_licensedir:%global license %%doc}
 %license LICENSE
 %doc README
-%{_rpmmacrodir}/*
+%{_rpmmacrodir}/macros.efi
+
+%files -n efi-srpm-macros
+%{!?_licensedir:%global license %%doc}
+%license LICENSE
+%doc README
+%{_rpmmacrodir}/macros.efi-srpm
 
 %changelog
 * Tue May 01 2018 Peter Jones <pjones@redhat.com> - 2-1

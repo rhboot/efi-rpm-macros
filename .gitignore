@@ -1,6 +1,7 @@
 *~
 .*.sw?
 macros.efi
+macros.efi-srpm
 efi-rpm-macros.spec
 *.tar.*
 usr/
