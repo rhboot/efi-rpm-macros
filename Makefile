@@ -46,8 +46,6 @@ $(TARGETS) :
 		-e 's,@@EFI_RPM_MACROS_VERSION@@,$(VERSION),g' \
 		<$^ >$@
 
-GITTAG ?= $(shell bash -c "echo $$(($(VERSION) + 1))")
-
 test-archive: efi-rpm-macros.spec
 	@rm -rf /tmp/efi-rpm-macros-$(VERSION) /tmp/efi-rpm-macros-$(VERSION)-tmp
 	@mkdir -p /tmp/efi-rpm-macros-$(VERSION)-tmp
@@ -59,6 +57,8 @@ test-archive: efi-rpm-macros.spec
 	@rm -rf /tmp/efi-rpm-macros-$(VERSION)
 	@echo "The archive is in efi-rpm-macros-$(VERSION).tar.bz2"
 
+GITTAG ?= $(shell bash -c "echo $$(($(VERSION) + 1))")
+
 bumpver :
 	@echo VERSION ?= $(GITTAG) > Makefile.version
 	@git add Makefile.version
@@ -67,7 +67,9 @@ bumpver :
 tag:
 	git tag -s $(GITTAG) refs/heads/master
 
-archive: bumpver tag efi-rpm-macros.spec
+archive: bumpver tag
+	@rm -vf efi-rpm-macros.spec
+	@$(MAKE) VERSION=$(GITTAG) efi-rpm-macros.spec
 	@rm -rf /tmp/efi-rpm-macros-$(GITTAG) /tmp/efi-rpm-macros-$(GITTAG)-tmp
 	@mkdir -p /tmp/efi-rpm-macros-$(GITTAG)-tmp
 	@git archive --format=tar $(GITTAG) | ( cd /tmp/efi-rpm-macros-$(GITTAG)-tmp/ ; tar x )
