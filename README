@@ -8,11 +8,13 @@ EFI_VENDOR	the vendor name for your EFI System Partition directory
 
 The following rpm macros are set:
 
-%efi		the arches that EFI packages should be built on, suitable for use with %ifarch
-%efi_vendor	the vendor name for your EFI System Partition directory
-%efi_esp_root	the directory where the EFI system Partition is mounted
-%efi_esp_efi	the full path to \EFI on the EFI System Partition
-%efi_esp_boot	the full path to \EFI\BOOT on the EFI System Partition
-%efi_esp_dir	the full path to your vendor directory on the EFI System Partition
-%efi_arch	the EFI architecture name, e.g. x64
-%efi_arch_upper	the EFI architecture name in upper case, e.g. X64
+%efi			the arches that EFI packages should be built on, suitable for use with %ifarch
+%efi_vendor		the vendor name for your EFI System Partition directory
+%efi_esp_root		the directory where the EFI system Partition is mounted
+%efi_esp_efi		the full path to \EFI on the EFI System Partition
+%efi_esp_boot		the full path to \EFI\BOOT on the EFI System Partition
+%efi_esp_dir		the full path to your vendor directory on the EFI System Partition
+%efi_arch		the EFI architecture name, e.g. x64
+%efi_arch_upper		the EFI architecture name in upper case, e.g. X64
+%efi_alt_arch		the EFI architecture name for other arches that build on this one (i.e. ia32 on x64)
+%efi_alt_arch_upper	the upper case version of %efi_alt_arch

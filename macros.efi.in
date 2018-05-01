@@ -56,3 +56,26 @@ end
   local arch = rpm.expand("%{efi_arch}")
   print(string.upper(arch))
 }
+
+%efi_alt_arch %{lua:
+-- test if our arch matches
+local function ifarch(archmacro)
+  local target = rpm.expand(" %{_target_cpu} ")
+  local arches = rpm.expand(" " .. archmacro .. " ")
+  local match = string.match(arches, target)
+  if not (match == nil) then
+    return true
+  end
+end
+-- Do the work
+if ifarch("x86_64") then
+  print("ia32")
+else
+  print("")
+end
+}
+
+%efi_alt_arch_upper %{lua:
+  local arch = rpm.expand("%{efi_alt_arch}")
+  print(string.upper(arch))
+}
