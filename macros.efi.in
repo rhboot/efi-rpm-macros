@@ -48,17 +48,14 @@ elseif ifarch("%{arm}") then
 elseif ifarch("ia64") then
   print("ia64")
 else
-  print("%{nil}")
+  rpm.expand("%%{error:Not an EFI architecture}")
+  print("")
 end
 }
 
 %efi_arch_upper %{lua:
   local arch = rpm.expand("%{efi_arch}")
-  if arch == '%{nil}'
-    print(arch)
-  else
-    print(string.upper(arch))
-  end
+  print(string.upper(arch))
 }
 
 %efi_alt_arch %{lua:
@@ -75,15 +72,11 @@ end
 if ifarch("x86_64") then
   print("ia32")
 else
-  print("%{nil}")
+  print("")
 end
 }
 
 %efi_alt_arch_upper %{lua:
   local arch = rpm.expand("%{efi_alt_arch}")
-  if arch == '%{nil}'
-    print(arch)
-  else
-    print(string.upper(arch))
-  end
+  print(string.upper(arch))
 }
