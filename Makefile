@@ -36,6 +36,12 @@ install : $(TARGETS)
 	install -d -m 0755 $(DESTDIR)/$(MACRODIR)
 	install -m 0644 macros.efi $(DESTDIR)/$(MACRODIR)/
 	install -m 0644 macros.efi-srpm $(DESTDIR)/$(MACRODIR)/
+	if [[ "$(EFI_ESP_ROOT)" != /boot ]] ; then \
+		install -d -m 0755 $(DESTDIR)/boot ; \
+	fi
+	install -d -m 0700 $(DESTDIR)/$(EFI_ESP_ROOT)
+	install -d -m 0700 $(DESTDIR)/$(EFI_ESP_ROOT)/EFI/BOOT
+	install -d -m 0700 $(DESTDIR)/$(EFI_ESP_ROOT)/EFI/$(EFI_VENDOR)
 
 $(TARGETS) :
 % : %.in
