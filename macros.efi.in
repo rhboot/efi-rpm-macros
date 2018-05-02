@@ -80,3 +80,12 @@ end
   local arch = rpm.expand("%{efi_alt_arch}")
   print(string.upper(arch))
 }
+
+%efi_has_alt_arch %{lua:
+  local arch = rpm.expand("%{efi_alt_arch}")
+  if arch == "" then
+    print("0")
+  else
+    print("1")
+  end
+}
