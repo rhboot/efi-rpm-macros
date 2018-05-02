@@ -60,10 +60,10 @@ machine bootloaders and tools.
 
 %files -n efi-filesystem
 %defattr(0700,root,root,-)
-%dir %{efi_esp_root}
-%dir %{efi_esp_efi}
-%dir %{efi_esp_dir}
-%dir %{efi_esp_boot}
+%dir /boot/efi
+%dir /boot/efi/EFI
+%dir /boot/efi/EFI/BOOT
+%dir /boot/efi/EFI/%{_efi_vendor_}
 
 %changelog
 * Tue May 01 2018 Peter Jones <pjones@redhat.com> - 2-1
