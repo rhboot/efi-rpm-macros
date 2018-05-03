@@ -17,4 +17,68 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-%efi @@EFI_ARCHES@@
+%_efi_srpm_macros_setup() %{expand:%{lua:
+  -- test if our arch matches
+  local function arch(archmacro)
+    local target = rpm.expand(" %{_target_cpu} ")
+    local arches = rpm.expand(" " .. archmacro .. " ")
+    local match = string.match(arches, target)
+    return (match ~= nil)
+  end
+  -- give us the arch...
+  local function getarch()
+    if arch("ia64") then
+      return("ia64")
+    elseif arch("x86_64") then
+      return("x64")
+    elseif arch("%{ix86}") then
+      return("ia32")
+    elseif arch("aarch64") then
+      return("aa64")
+    elseif arch("%{arm}") then
+      return("arm")
+    else
+      return("")
+    end
+  end
+  -- alt arch
+  local function getaltarch()
+    if arch("x86_64") then
+      return("ia32")
+    else
+      return(nil)
+    end
+  end
+  -- make some macros
+  local done = rpm.expand("%{?_efi}")
+  if done == nil or done == "" then
+    local alt = getaltarch()
+    print("%global _efi @@EFI_ARCHES@@\\n")
+    print("%global _efi_vendor @@EFI_VENDOR@@\\n")
+    print("%global _efi_arch " .. getarch() .. "\\n")
+    print("%global _efi_arch_upper " .. string.upper(getarch()) .. "\\n")
+    if alt == nil then
+      print("%global _efi_has_alt_arch 0\\n")
+    else
+      print("%global _efi_has_alt_arch 1\\n")
+      print("%global _efi_alt_arch " .. alt .. "\\n")
+      print("%global _efi_alt_arch_upper " .. string.upper(alt) .. "\\n")
+    end
+  end
+}}
+
+%efi_srpm_macros_version %{expand:%{_efi_srpm_macros_setup}}@@EFI_RPM_MACROS_VERSION@@
+
+%efi %{expand:%{_efi_srpm_macros_setup}}%{expand:%{_efi}}
+%efi_vendor %{expand:%{_efi_srpm_macros_setup}}%{expand:%{_efi_vendor}}
+
+%efi_esp_root @@EFI_ESP_ROOT@@
+%efi_esp_efi %{efi_esp_root}/EFI
+%efi_esp_boot %{efi_esp_efi}/BOOT
+%efi_esp_dir %{expand:%{_efi_srpm_macros_setup}}%{efi_esp_efi}/%{efi_vendor}
+
+%efi_arch %{expand:%{_efi_srpm_macros_setup}}%{_efi_arch}
+%efi_arch_upper %{expand:%{_efi_srpm_macros_setup}}%{_efi_arch_upper}
+%efi_has_alt_arch %{expand:%{_efi_srpm_macros_setup}}0%{_efi_has_alt_arch}
+%efi_alt_arch %{expand:%{_efi_srpm_macros_setup}}%{?_efi_alt_arch}%{nil}
+%efi_alt_arch_upper %{expand:%{_efi_srpm_macros_setup}}%{?_efi_alt_arch_upper}%{nil}

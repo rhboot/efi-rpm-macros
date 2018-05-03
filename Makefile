@@ -18,7 +18,8 @@ EFI_ESP_ROOT	?= /boot/efi
 EFI_ARCHES	?= x86_64 aarch64 %{arm} %{ix86}
 EFI_VENDOR	?=
 
-TARGETS = macros.efi macros.efi-srpm efi-rpm-macros.spec
+# TARGETS = macros.efi macros.efi-srpm efi-rpm-macros.spec
+TARGETS = macros.efi-srpm efi-rpm-macros.spec
 
 check_efi_vendor :
 ifeq ($(EFI_VENDOR),)
@@ -34,7 +35,7 @@ clean :
 install : | check_efi_vendor
 install : $(TARGETS)
 	install -d -m 0755 $(DESTDIR)/$(MACRODIR)
-	install -m 0644 macros.efi $(DESTDIR)/$(MACRODIR)/
+	# install -m 0644 macros.efi $(DESTDIR)/$(MACRODIR)/
 	install -m 0644 macros.efi-srpm $(DESTDIR)/$(MACRODIR)/
 	if [[ "$(EFI_ESP_ROOT)" != /boot ]] ; then \
 		install -d -m 0755 $(DESTDIR)/boot ; \
