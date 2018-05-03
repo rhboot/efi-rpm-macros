@@ -5,9 +5,7 @@ Release: 1%{?dist}
 Group: Development/System
 License: GPLv3+
 URL: https://github.com/rhboot/%{name}/
-ExclusiveArch: @@EFI_ARCHES@@
 BuildRequires: git sed
-Requires: efi-filesystem rpm
 BuildArch: noarch
 
 Source0: https://github.com/rhboot/%{name}/releases/download/%{version}/%{name}-%{version}.tar.bz2
@@ -22,7 +20,7 @@ Source0: https://github.com/rhboot/%{name}/releases/download/%{version}/%{name}-
 Summary: Common SRPM Macros for building EFI-related packages
 Group: Development/System
 BuildArch: noarch
-Requires: efi-filesystem rpm
+Requires: rpm
 
 %description -n efi-srpm-macros
 efi-srpm-macros provides a set of SRPM macros for use in EFI-related packages.
@@ -46,11 +44,11 @@ machine bootloaders and tools.
 %install
 %make_install EFI_VENDOR=%{_efi_vendor_}
 
-%files
-%{!?_licensedir:%global license %%doc}
-%license LICENSE
-%doc README
-%{_rpmmacrodir}/macros.efi
+#%%files
+#%%{!?_licensedir:%%global license %%%%doc}
+#%%license LICENSE
+#%%doc README
+#%%{_rpmmacrodir}/macros.efi
 
 %files -n efi-srpm-macros
 %{!?_licensedir:%global license %%doc}
@@ -66,6 +64,10 @@ machine bootloaders and tools.
 %dir /boot/efi/EFI/%{_efi_vendor_}
 
 %changelog
+* Fri May 04 2018 Peter Jones <pjones@redhat.com> - 3-1
+- Make efi-*-macros packages not be ExclusiveArch, because they need to work
+  in non-efi-arch packages.
+
 * Tue May 01 2018 Peter Jones <pjones@redhat.com> - 2-1
 - Lots of rpmlint fixups and the like.
 
