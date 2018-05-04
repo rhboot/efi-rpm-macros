@@ -38,7 +38,7 @@
     elseif arch("%{arm}") then
       return("arm")
     else
-      return("")
+      return("none")
     end
   end
   -- alt arch
@@ -46,24 +46,30 @@
     if arch("x86_64") then
       return("ia32")
     else
-      return(nil)
+      return("none")
     end
   end
   -- make some macros
   local done = rpm.expand("%{?_efi}")
   if done == nil or done == "" then
+    local arch = getarch()
     local alt = getaltarch()
     print("%global _efi @@EFI_ARCHES@@\\n")
     print("%global _efi_vendor @@EFI_VENDOR@@\\n")
+    if arch == "none" then
+      print("%global _efi_has_arch 0\\n")
+    else
+      print("%global _efi_has_arch 1\\n")
+    end
     print("%global _efi_arch " .. getarch() .. "\\n")
     print("%global _efi_arch_upper " .. string.upper(getarch()) .. "\\n")
-    if alt == nil then
+    if alt == "none" then
       print("%global _efi_has_alt_arch 0\\n")
     else
       print("%global _efi_has_alt_arch 1\\n")
-      print("%global _efi_alt_arch " .. alt .. "\\n")
-      print("%global _efi_alt_arch_upper " .. string.upper(alt) .. "\\n")
     end
+    print("%global _efi_alt_arch " .. alt .. "\\n")
+    print("%global _efi_alt_arch_upper " .. string.upper(alt) .. "\\n")
   end
 }}
 
@@ -79,6 +85,7 @@
 
 %efi_arch %{expand:%{_efi_srpm_macros_setup}}%{_efi_arch}
 %efi_arch_upper %{expand:%{_efi_srpm_macros_setup}}%{_efi_arch_upper}
+%efi_has_arch %{expand:%{_efi_srpm_macros_setup}}0%{_efi_has_arch}
 %efi_has_alt_arch %{expand:%{_efi_srpm_macros_setup}}0%{_efi_has_alt_arch}
 %efi_alt_arch %{expand:%{_efi_srpm_macros_setup}}%{?_efi_alt_arch}%{nil}
 %efi_alt_arch_upper %{expand:%{_efi_srpm_macros_setup}}%{?_efi_alt_arch_upper}%{nil}
