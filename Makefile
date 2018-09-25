@@ -24,14 +24,24 @@ RPM = $(shell command -v rpm)
 ifeq (${RPM},)
 $(error rpm could not be found)
 endif
+MACRODIR = $(call get-config,macrodir)
+ifeq (${MACRODIR},)
 MACRODIR = $(shell ${RPM} --eval '%{_rpmmacrodir}')
+endif
 ifeq (${MACRODIR},)
 $(error rpm macro directory could not be found)
 endif
+CONFIGDIR = $(call get-config,configdir)
+ifeq (${CONFIGDIR},)
+CONFIGDIR = $(shell ${RPM} --eval '%{_rpmconfigdir}')
+endif
+ifeq (${CONFIGDIR},)
+$(error rpm config directory could not be found)
+endif
 PRERELEASE ?=
 
-# TARGETS = macros.efi macros.efi-srpm efi-rpm-macros.spec
-TARGETS = macros.efi-srpm efi-rpm-macros.spec
+# TARGETS = macros.efi macros.efi-srpm efi-rpm-macros.spec brp-boot-efi-times
+TARGETS = macros.efi-srpm efi-rpm-macros.spec brp-boot-efi-times
 
 check_efi_vendor :
 ifeq ($(EFI_VENDOR),)
@@ -49,6 +59,8 @@ install : $(TARGETS)
 	install -d -m 0755 $(DESTDIR)/$(MACRODIR)
 	# install -m 0644 macros.efi $(DESTDIR)/$(MACRODIR)/
 	install -m 0644 macros.efi-srpm $(DESTDIR)/$(MACRODIR)/
+	install -d -m 0755 $(DESTDIR)/$(CONFIGDIR)/
+	install -m 0755 brp-boot-efi-times $(DESTDIR)/$(CONFIGDIR)/
 	if [[ "$(EFI_ESP_ROOT)" != /boot ]] ; then \
 		install -d -m 0755 $(DESTDIR)/boot ; \
 	fi
@@ -66,6 +78,7 @@ $(TARGETS) :
 		-e 's,@@EFI_RPM_MACROS_VERSION@@,$(VERSION),g' \
 		-e 's,@@EFI_PRERELEASE@@,$(PRERELEASE),g' \
 		-e 's,@@EFI_SOURCE_VERSION@@,$(SOURCE_VERSION),g' \
+		-e 's,@@RPM_CONFIG_DIR@@,$(CONFIGDIR),g' \
 		<$^ >$@
 
 test-archive: efi-rpm-macros.spec.in

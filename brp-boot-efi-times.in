@@ -1,0 +1,68 @@
+#!/bin/bash -eu
+
+# If using normal root, avoid changing anything.
+if [ -z "$RPM_BUILD_ROOT" -o "$RPM_BUILD_ROOT" = "/" ]; then
+	exit 0
+fi
+if [[ ! -d "$RPM_BUILD_ROOT/@@EFI_ESP_ROOT@@" ]] ; then
+	exit 0
+fi
+
+update() {
+	local path="$1"
+	local ctime=$(stat -c "%Z" "${path}")
+
+	# we always want to touch it once...
+	if [[ $((${ctime} % 2)) -eq 0 ]] ; then
+		let ++ctime
+	fi
+
+	while [[ $((${ctime} % 2)) -eq 1 ]] ; do
+		let ++ctime
+		touch -h -c -d "@${ctime}" "${path}"
+		ctime=$(stat -c "%Z" "${path}")
+	done
+}
+
+declare -a dirs
+dirs=() || :
+
+cd "$RPM_BUILD_ROOT"
+
+while IFS= read -r -d $'\0' f; do
+	if [[ -d "${f}" ]] ; then
+		dirs[${#dirs[@]}]="${f}"
+	else
+		update "${f}"
+	fi
+done < <(find .@@EFI_ESP_ROOT@@/ -print0)
+
+# sort the directory list lexicographically, longest-first, so a parent dir's
+# updated mtime won't be clobbered by the child dir being updated, if some day
+# someone actually makes that matter.
+#
+# I don't think we actually have to do this on linux, but
+# $RPM_BUILD_ROOT/@@EFI_ESP_ROOT@@/ isn't going to have but so many files on
+# it.
+let i=0 || :
+let j=1
+while [[ ${i} -lt ${#dirs[@]} ]] && [[ ${j} -lt ${#dirs[@]} ]] ; do
+	if [[ "${dirs[$i]}" < "${dirs[$j]}" ]] ; then
+		tmp="${dirs[$i]}"
+		dirs[$i]="${dirs[$j]}"
+		dirs[$j]="${tmp}"
+	else
+		let ++j
+	fi
+	if [[ ${j} -ge ${#dirs[@]} ]] ; then
+		let ++i
+		let ++j
+	fi
+done
+
+# and now just process them just like files.
+if [[ ${#dirs[@]} -gt 0 ]] ; then
+	for dir in "${dirs[@]}" ; do
+		update "${dir}"
+	done
+fi
