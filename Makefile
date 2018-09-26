@@ -4,7 +4,22 @@ TOPDIR = $(shell echo $$PWD)
 
 include $(TOPDIR)/Makefile.version
 
-DESTDIR ?=
+define get-config
+$(shell git config --local --get "efi.$(1)")
+endef
+
+EFI_ESP_ROOT	?= $(call get-config,esp-root)
+ifeq ($(EFI_ESP_ROOT),)
+override EFI_ESP_ROOT=/boot/efi
+endif
+EFI_ARCHES	?= $(call get-config,arches)
+ifeq ($(EFI_ARCHES),)
+override EFI_ARCHES="x86_64 aarch64 %{arm} %{ix86}"
+endif
+EFI_VENDOR	?= $(call get-config,vendor)
+
+DESTDIR ?= $(call get-config,destdir)
+
 RPM = $(shell command -v rpm)
 ifeq (${RPM},)
 $(error rpm could not be found)
@@ -14,10 +29,6 @@ ifeq (${MACRODIR},)
 $(error rpm macro directory could not be found)
 endif
 PRERELEASE ?=
-
-EFI_ESP_ROOT	?= /boot/efi
-EFI_ARCHES	?= x86_64 aarch64 %{arm} %{ix86}
-EFI_VENDOR	?=
 
 # TARGETS = macros.efi macros.efi-srpm efi-rpm-macros.spec
 TARGETS = macros.efi-srpm efi-rpm-macros.spec

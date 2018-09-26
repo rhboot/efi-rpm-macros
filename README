@@ -6,6 +6,12 @@ EFI_ESP_ROOT	the directory where the EFI System Partition is mounted
 EFI_ARCHES	the rpm arches %efi will match on
 EFI_VENDOR	the vendor name for your EFI System Partition directory
 
+Those can also be set more permanently with:
+
+git config --local --add esp-root /boot/efi
+git config --local --add arches x86_64
+git config --local --add vendor myos
+
 The following rpm macros are set:
 
 %efi			the arches that EFI packages should be built on, suitable for use with %ifarch
