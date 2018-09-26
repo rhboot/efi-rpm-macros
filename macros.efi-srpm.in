@@ -89,3 +89,5 @@
 %efi_has_alt_arch %{expand:%{_efi_srpm_macros_setup}}0%{_efi_has_alt_arch}
 %efi_alt_arch %{expand:%{_efi_srpm_macros_setup}}%{?_efi_alt_arch}%{nil}
 %efi_alt_arch_upper %{expand:%{_efi_srpm_macros_setup}}%{?_efi_alt_arch_upper}%{nil}
+
+%efi_build_requires %{nil}
