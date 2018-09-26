@@ -13,6 +13,7 @@ MACRODIR = $(shell ${RPM} --eval '%{_rpmmacrodir}')
 ifeq (${MACRODIR},)
 $(error rpm macro directory could not be found)
 endif
+PRERELEASE ?=
 
 EFI_ESP_ROOT	?= /boot/efi
 EFI_ARCHES	?= x86_64 aarch64 %{arm} %{ix86}
@@ -52,9 +53,13 @@ $(TARGETS) :
 		-e 's,@@EFI_ARCHES@@,$(EFI_ARCHES),g' \
 		-e 's,@@EFI_VENDOR@@,$(EFI_VENDOR),g' \
 		-e 's,@@EFI_RPM_MACROS_VERSION@@,$(VERSION),g' \
+		-e 's,@@EFI_PRERELEASE@@,$(PRERELEASE),g' \
+		-e 's,@@EFI_SOURCE_VERSION@@,$(SOURCE_VERSION),g' \
 		<$^ >$@
 
-test-archive: efi-rpm-macros.spec
+test-archive: efi-rpm-macros.spec.in
+	@rm -vf efi-rpm-macros.spec
+	@$(MAKE) PRERELEASE=~1 VERSION=\$(($(VERSION)+1)) SOURCE_VERSION=$(VERSION) efi-rpm-macros.spec
 	@rm -rf /tmp/efi-rpm-macros-$(VERSION) /tmp/efi-rpm-macros-$(VERSION)-tmp
 	@mkdir -p /tmp/efi-rpm-macros-$(VERSION)-tmp
 	@git archive --format=tar $(shell git branch | awk '/^*/ { print $$2 }') | ( cd /tmp/efi-rpm-macros-$(VERSION)-tmp/ ; tar x )
@@ -77,7 +82,7 @@ tag:
 
 archive: bumpver tag
 	@rm -vf efi-rpm-macros.spec
-	@$(MAKE) VERSION=$(GITTAG) efi-rpm-macros.spec
+	@$(MAKE) VERSION=$(GITTAG) SOURCE_VERSION=$(GITTAG) efi-rpm-macros.spec
 	@rm -rf /tmp/efi-rpm-macros-$(GITTAG) /tmp/efi-rpm-macros-$(GITTAG)-tmp
 	@mkdir -p /tmp/efi-rpm-macros-$(GITTAG)-tmp
 	@git archive --format=tar $(GITTAG) | ( cd /tmp/efi-rpm-macros-$(GITTAG)-tmp/ ; tar x )
