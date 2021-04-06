@@ -45,7 +45,7 @@
   local function getaltarch()
     if arch("x86_64") then
       return("ia32")
-    elsif arch("aarch64") then
+    elseif arch("aarch64") then
       return("arm")
     else
       return("none")
