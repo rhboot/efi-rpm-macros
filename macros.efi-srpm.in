@@ -43,11 +43,7 @@
   end
   -- alt arch
   local function getaltarch()
-    if arch("x86_64") then
-      return("ia32")
-    else
-      return("none")
-    end
+    return("none")
   end
   -- make some macros
   local done = rpm.expand("%{?_efi}")
