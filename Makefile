@@ -102,7 +102,7 @@ bumpver :
 	git commit -m "Bump version to $(GITTAG)" -s
 
 tag:
-	git tag -s $(GITTAG) refs/heads/master
+	git tag -s $(GITTAG) refs/heads/main
 
 archive: bumpver tag
 	@rm -vf efi-rpm-macros.spec
