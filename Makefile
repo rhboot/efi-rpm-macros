@@ -65,6 +65,7 @@ install : $(TARGETS)
 		install -d -m 0755 $(DESTDIR)/boot ; \
 	fi
 	install -d -m 0700 $(DESTDIR)/$(EFI_ESP_ROOT)
+	install -d -m 0700 $(DESTDIR)/$(EFI_ESP_ROOT)/EFI
 	install -d -m 0700 $(DESTDIR)/$(EFI_ESP_ROOT)/EFI/BOOT
 	install -d -m 0700 $(DESTDIR)/$(EFI_ESP_ROOT)/EFI/$(EFI_VENDOR)
 
