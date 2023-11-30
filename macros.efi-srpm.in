@@ -37,6 +37,8 @@
       return("aa64")
     elseif arch("%{arm}") then
       return("arm")
+    elseif arch("loongarch64") then
+      return("loongarch64")
     else
       return("none")
     end
