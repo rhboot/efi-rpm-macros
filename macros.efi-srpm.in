@@ -37,6 +37,8 @@
       return("aa64")
     elseif arch("%{arm}") then
       return("arm")
+    elseif arch("riscv64") then
+      return("riscv64")
     else
       return("none")
     end
