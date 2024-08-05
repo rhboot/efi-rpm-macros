@@ -14,7 +14,7 @@ override EFI_ESP_ROOT=/boot/efi
 endif
 EFI_ARCHES	?= $(call get-config,arches)
 ifeq ($(EFI_ARCHES),)
-override EFI_ARCHES="x86_64 aarch64 %{arm} %{ix86}"
+override EFI_ARCHES="%{x86_64} aarch64 %{arm} %{ix86}"
 endif
 EFI_VENDOR	?= $(call get-config,vendor)
 

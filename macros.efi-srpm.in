@@ -29,7 +29,7 @@
   local function getarch()
     if arch("ia64") then
       return("ia64")
-    elseif arch("x86_64") then
+    elseif arch("%{x86_64}") then
       return("x64")
     elseif arch("%{ix86}") then
       return("ia32")
