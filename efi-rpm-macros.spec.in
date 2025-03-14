@@ -36,7 +36,7 @@ machine bootloaders and tools.
 %autosetup -S git_am -n %{name}-@@EFI_SOURCE_VERSION@@
 git config --local --add efi.vendor "%{_efi_vendor_}"
 git config --local --add efi.esp-root /boot/efi
-git config --local --add efi.arches "x86_64 aarch64 %{arm} %{ix86}"
+git config --local --add efi.arches "x86_64 aarch64 %{arm} %{ix86} riscv64"
 
 %build
 %make_build clean all
