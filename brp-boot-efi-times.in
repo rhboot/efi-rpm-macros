@@ -1,7 +1,10 @@
 #!/bin/bash -eu
 
+# shellcheck disable=SC2004
+# shellcheck disable=SC2219
+
 # If using normal root, avoid changing anything.
-if [ -z "$RPM_BUILD_ROOT" -o "$RPM_BUILD_ROOT" = "/" ]; then
+if [ -z "$RPM_BUILD_ROOT" ] || [ "$RPM_BUILD_ROOT" = "/" ]; then
 	exit 0
 fi
 if [[ ! -d "$RPM_BUILD_ROOT/@@EFI_ESP_ROOT@@" ]] ; then
@@ -10,7 +13,9 @@ fi
 
 update() {
 	local path="$1"
-	local ctime=$(stat -c "%Z" "${path}")
+	local ctime
+
+	ctime=$(stat -c "%Z" "${path}")
 
 	# we always want to touch it once...
 	if [[ $((${ctime} % 2)) -eq 0 ]] ; then
